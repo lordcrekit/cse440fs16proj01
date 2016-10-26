@@ -1,0 +1,80 @@
+male(george).
+male(spencer).
+male(philip).
+male(charles).
+male(mark).
+male(andrew).
+male(edward).
+male(william).
+male(harry).
+male(peter).
+male(eugenie).
+
+female(mum).
+female(kydd).
+female(elizabeth).
+female(margaret).
+female(diana).
+female(anne).
+female(sarah).
+female(zara).
+female(beatrice).
+
+spouse(george, mum).
+spouse(spencer, kydd).
+spouse(elizabeth, philip).
+spouse(diana, charles).
+spouse(anne, mark).
+spouse(andrew, sarah).
+spouse(william, harry).
+spouse(peter, zara).
+spouse(beatrice, eugeine).
+spouse(X, Y) :- spouse(Y, X).
+
+child(elizabeth, george).
+child(elizabeth, mum).
+child(margaret, george).
+child(margaret, mum).
+child(diana, spencer).
+child(diana, kydd).
+child(charles, elizabeth).
+child(charles, philip).
+child(anne, elizabeth).
+child(anne, philip).
+child(andrew, elizabeth).
+child(andrew, philip).
+child(edward, elizabeth).
+child(edward, philip).
+child(william, diana).
+child(william, charles).
+child(harry, diana).
+child(harry, charles).
+child(peter, anne).
+child(peter, mark).
+child(zara, anne).
+child(zara, mark).
+child(beatrice, andrew).
+child(beatrice, sarah).
+child(eugine, andrew).
+child(eugine, sarah).
+
+grandchild(X, Y) :- child(X, P), child(P, Y).
+greatGrandparent(X, Y) :- child(Y, P1), child(P1, P2), child(P2, X).
+
+sibling(X, Y) :- child(X, P1), child(Y, P1), child(X, P2), child(Y, P2).
+brother(X, Y) :- male(X), sibling(X, Y).
+sister(X, Y) :- female(X), sibling(X, Y).
+
+son(X, Y) :- child(X, Y), male(X).
+daughter(X, Y) :- child(X, Y), female(X).
+
+parentSibling(X, Y) :- child(Y, P), sibling(P, X).
+parentSibling(X, y) :- child(Y, P), siblingInLaw(P, X).
+uncle(X, Y) :- male(X), parentSibling(X, Y).
+aunt(X, Y) :- female(X), parentSibling(X, Y).
+
+siblingInLaw(X, Y) :- spouse(Y, S), sibling(X, S).
+brotherInLaw(X, Y) :- male(X), siblingInLaw(X, Y).
+sisterInLaw(X, Y) :- female(X), siblingInLaw(X, Y).
+
+firstCousin(X, Y) :- child(X, P1), parentSibling(P1, Y). 
