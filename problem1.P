@@ -21,15 +21,17 @@ female(zara).
 female(beatrice).
 
 spouse(george, mum).
+spouse(mum, george).
 spouse(spencer, kydd).
+spouse(kydd, spencer).
 spouse(elizabeth, philip).
+spouse(philip, elizabeth).
 spouse(diana, charles).
+spouse(charles, diana).
 spouse(anne, mark).
+spouse(mark, anne).
 spouse(andrew, sarah).
-spouse(william, harry).
-spouse(peter, zara).
-spouse(beatrice, eugeine).
-spouse(X, Y) :- spouse(Y, X).
+spouse(sarah, andrew).
 
 child(elizabeth, george).
 child(elizabeth, mum).
@@ -58,23 +60,25 @@ child(beatrice, sarah).
 child(eugine, andrew).
 child(eugine, sarah).
 
-grandchild(X, Y) :- child(X, P), child(P, Y).
+grandChild(X, Y) :- child(X, P), child(P, Y).
 greatGrandparent(X, Y) :- child(Y, P1), child(P1, P2), child(P2, X).
 
-sibling(X, Y) :- child(X, P1), child(Y, P1), child(X, P2), child(Y, P2).
 brother(X, Y) :- male(X), sibling(X, Y).
 sister(X, Y) :- female(X), sibling(X, Y).
+sibling(X, Y) :- setof(_,sibling0(X,Y),_).
+sibling0(X, Y) :- child(X, P1), child(Y, P1), X \= Y.
 
 son(X, Y) :- child(X, Y), male(X).
 daughter(X, Y) :- child(X, Y), female(X).
 
 parentSibling(X, Y) :- child(Y, P), sibling(P, X).
-parentSibling(X, y) :- child(Y, P), siblingInLaw(P, X).
+parentSibling(X, Y) :- child(Y, P), siblingInLaw(P, X).
 uncle(X, Y) :- male(X), parentSibling(X, Y).
 aunt(X, Y) :- female(X), parentSibling(X, Y).
 
-siblingInLaw(X, Y) :- spouse(Y, S), sibling(X, S).
 brotherInLaw(X, Y) :- male(X), siblingInLaw(X, Y).
 sisterInLaw(X, Y) :- female(X), siblingInLaw(X, Y).
+siblingInLaw(X, Y) :- spouse(Y, S), sibling(X, S).
+siblingInLaw(X, Y) :- spouse(X, S), sibling(Y, S).
 
-firstCousin(X, Y) :- child(X, P1), parentSibling(P1, Y). 
+firstCousin(X, Y) :- child(X, P1), child(Y, P2), sibling(P1, P2).
