@@ -1,0 +1,83 @@
+verb(put).
+verb(take).
+
+det(the).
+
+noun(cone).
+noun(square).
+noun(block).
+noun(circle).
+noun(cube).
+noun(ball).
+
+prep(on).
+
+adj(red).
+adj(blue).
+adj(green).
+adj(yellow).
+
+/**
+ * Start.
+ */
+command(X) :- X = [A|B], verb(A), !, put_or_take(A, B).
+command(X) :- fail(X).
+
+/**
+ * Figure out if we are going to put, or take.
+ */
+put_or_take(X, Y) :- X == put, !, put0(Y).
+put_or_take(X, Y) :- X == take, !, take0(Y).
+put_or_take(X, Y) :- fail(X).
+
+/**
+ * Execute take logic.
+ */
+take0(X) :- X = [A|B], det(A), !, take1(B).
+take0(X) :- fail(X).
+
+take1(X) :- X = [A|B], adj(A), !, take1(B).
+take1(X) :- X = [A|B], noun(A), !, take2(A, B).
+take1(X) :- fail(X).
+
+take2(X, Y) :- Y = [], !, take(X).
+take2(X, Y) :- fail(Y).
+
+/**
+ * Execute put logic.
+ */
+put0(X) :- X = [A|B], det(A), !, put1(B).
+put0(X) :- fail(X).
+
+put1(X) :- X = [A|B], adj(A), !, put1(B).
+put1(X) :- X = [A|B], noun(A), !, put2(A, B).
+put1(X) :- fail(X).
+
+put2(Put, X) :- X = [A|B], prep(A), !, put3(Put, B).
+put2(Put, X) :- fail(X).
+
+put3(Put, X) :- X = [A|B], det(A), !, put4(Put, B).
+put3(Put, X) :- fail(X).
+
+put4(Put, X) :- X = [A|B], adj(A), !, put4(Put, B).
+put4(Put, X) :- X = [A|B], noun(A), !, put5(Put, A, B).
+put4(Put, X) :- fail(X).
+
+put5(Put, On, X) :- X = [], !, put(Put, On).
+put5(Put, On, X) :- fail(X).
+
+/**
+ * Final steps.
+ */
+fail(X) :- write('I do not understand you, please try again.'). /*, write(' failed on '), write(X). */
+
+take(X) :- write('I have taken the '),
+                write(X),
+                write('.').
+
+put(X, Y) :- write('I have put the '),
+                write(X),
+                write(' on the '),
+                write(Y),
+                write('.').
+
